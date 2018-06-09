@@ -60,14 +60,11 @@ namespace WpfKinectHelper
     /*
      *  KinectHelper - Contains helpful methods and events for working with the Kinect
      */
-    class KinectHelper
+    class KinectHelper:IPainter
     {
         // The KincectSensor being used
         private KinectSensor Kinect { get; set; }
-
-        private bool rightHandFalg { get; set; } = false;
-        private bool leftHandFalg { get; set; } = false;
-
+      
         // Coordinate Mapper (for custom conversions beyond the Skeleton)
         public CoordinateMapper PointMapper
         {
@@ -122,6 +119,10 @@ namespace WpfKinectHelper
         private Thread audioThread; // Separate thread for capturing audio (prevent UI from hanging)
         private byte[] audioBuffer; // Buffer to store the audio stream data
         public bool isReading { get { return this.reading; } }
+
+        public KinectPainter painter { get; set; }
+
+        public WriteableBitmap drawenImage{get;set;}
 
 
         // Other behavioral settings
@@ -499,24 +500,7 @@ namespace WpfKinectHelper
         // Draw all the bones and joints of a Tracked Skeleton
         private void DrawSkeletonBonesAndJoints(DrawingContext dc, JointCollection joints)
         {
-            Joint rightHand = joints.Where(joint => joint.JointType == JointType.HandRight).FirstOrDefault();
-            Joint leftHand = joints.Where(joint => joint.JointType == JointType.HandLeft).FirstOrDefault();
-            Joint head = joints.Where(joint => joint.JointType == JointType.Head).FirstOrDefault();
-            if (rightHand.Position.Y > head.Position.Y)
-            {
-                rightHandFalg = true;
-                leftHandFalg = false;
-            }
-            if (leftHand.Position.Y > head.Position.Y)
-            {
-                leftHandFalg = true;
-                rightHandFalg = false;
-            }
-            if (rightHandFalg)
-                dc.DrawEllipse(this.trackedJointBrush, null, this.SkeletonPointToScreen(rightHand.Position), JointThickness, JointThickness);
-            if (leftHandFalg)
-                dc.DrawEllipse(this.trackedJointBrush, null, this.SkeletonPointToScreen(leftHand.Position), JointThickness, JointThickness);
-
+            KinectPainter.getPainter.Paint(this, dc, joints);
             // Render Head and Shoulders
             //DrawBone(dc, joints[JointType.Head], joints[JointType.ShoulderCenter]);
             //DrawBone(dc, joints[JointType.ShoulderCenter], joints[JointType.ShoulderLeft]);
@@ -693,6 +677,8 @@ namespace WpfKinectHelper
         {
             backgroundBrush = brush;
         }
+
+
     }
 
     /*
