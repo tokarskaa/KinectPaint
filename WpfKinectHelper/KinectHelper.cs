@@ -480,7 +480,6 @@ namespace WpfKinectHelper
                     foreach (Skeleton skeleton in skeletonStreamData)
                     {
                         // TO-DO: Render clipped edges
-
                         if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
                         {
                             DrawSkeletonBonesAndJoints(dc, skeleton.Joints);

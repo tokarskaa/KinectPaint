@@ -41,7 +41,7 @@ namespace WpfKinectHelper
             //helper.InitializeKinectSensor();
             
             // Enable the Kinect and all data streams with shorthand constructor
-            helper = new KinectHelper(true, true, true, true, true);
+            helper = new KinectHelper(false, false, true, false, false);
 
             // Link the UI Images with the images produced by the Kinect
             //_colorImage.Source = helper.colorBitmap;
